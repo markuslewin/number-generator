@@ -1,7 +1,8 @@
 ---
+import { generate } from "../helpers/generate";
 import Layout from "../layouts/Layout.astro";
 
-const number = Math.floor(Math.random() * 100);
+const number = generate();
 ---
 
 <Layout title="Number Generator">
@@ -19,14 +20,16 @@ const number = Math.floor(Math.random() * 100);
 </Layout>
 
 <script>
+  import { generate } from "../helpers/generate";
+
   const generators = document.querySelectorAll("[data-generator]");
   for (const generator of generators) {
     generator.addEventListener("submit", (event) => {
       if (event.target instanceof Element) {
-        const number = Math.floor(Math.random() * 100).toString();
+        const number = generate();
         const numEls = event.target.querySelectorAll("[data-number]");
         for (const numEl of numEls) {
-          numEl.textContent = number;
+          numEl.textContent = number.toString();
         }
         event.preventDefault();
       }
