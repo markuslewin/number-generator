@@ -20,23 +20,32 @@ const number = calculateNumber();
 </Layout>
 
 <script>
+  import { createFetcher, isAbortedFetch } from "../helpers/fetcher";
+
   const generators = document.querySelectorAll("[data-generator]");
   for (const generator of generators) {
     generator.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const number = await fetchNumber();
-      if (event.target instanceof Element) {
-        const numEls = event.target.querySelectorAll("[data-number]");
-        for (const numEl of numEls) {
-          numEl.textContent = number.toString();
+      try {
+        const number = await fetchNumber();
+        if (event.target instanceof Element) {
+          const numEls = event.target.querySelectorAll("[data-number]");
+          for (const numEl of numEls) {
+            numEl.textContent = number.toString();
+          }
         }
+      } catch (e) {
+        if (isAbortedFetch(e)) {
+          return;
+        }
+        throw e;
       }
     });
   }
 
   const fetchNumber = async () => {
-    const response = await fetch("number");
+    const response = await fetcher.fetch("/number");
     if (response.ok) {
       const json = await response.json();
       const number = json.number;
@@ -47,6 +56,8 @@ const number = calculateNumber();
     }
     throw response;
   };
+
+  const fetcher = createFetcher();
 </script>
 
 <style>
