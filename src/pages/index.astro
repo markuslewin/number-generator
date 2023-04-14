@@ -7,9 +7,9 @@ const number = Math.floor(Math.random() * 100);
 <Layout title="Number Generator">
   <main>
     <h1>Welcome to <span class="text-gradient">Number Generator</span></h1>
-    <form class="instructions">
+    <form class="instructions" data-generator>
       <p>
-        <strong>{number}</strong>
+        <strong data-number>{number}</strong>
       </p>
       <button class="link-card" type="submit">
         <span>New number</span>
@@ -17,6 +17,22 @@ const number = Math.floor(Math.random() * 100);
     </form>
   </main>
 </Layout>
+
+<script>
+  const generators = document.querySelectorAll("[data-generator]");
+  for (const generator of generators) {
+    generator.addEventListener("submit", (event) => {
+      if (event.target instanceof Element) {
+        const number = Math.floor(Math.random() * 100).toString();
+        const numEls = event.target.querySelectorAll("[data-number]");
+        for (const numEl of numEls) {
+          numEl.textContent = number;
+        }
+        event.preventDefault();
+      }
+    });
+  }
+</script>
 
 <style>
   main {
