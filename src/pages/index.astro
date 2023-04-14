@@ -1,8 +1,8 @@
 ---
-import { generate } from "../helpers/generate";
+import { calculateNumber } from "../helpers/calculateNumber";
 import Layout from "../layouts/Layout.astro";
 
-const number = generate();
+const number = calculateNumber();
 ---
 
 <Layout title="Number Generator">
@@ -20,21 +20,33 @@ const number = generate();
 </Layout>
 
 <script>
-  import { generate } from "../helpers/generate";
-
   const generators = document.querySelectorAll("[data-generator]");
   for (const generator of generators) {
-    generator.addEventListener("submit", (event) => {
+    generator.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const number = await fetchNumber();
       if (event.target instanceof Element) {
-        const number = generate();
         const numEls = event.target.querySelectorAll("[data-number]");
         for (const numEl of numEls) {
           numEl.textContent = number.toString();
         }
-        event.preventDefault();
       }
     });
   }
+
+  const fetchNumber = async () => {
+    const response = await fetch("number");
+    if (response.ok) {
+      const json = await response.json();
+      const number = json.number;
+      if (typeof number === "number") {
+        return number;
+      }
+      throw new Error("Number is not a number");
+    }
+    throw response;
+  };
 </script>
 
 <style>
